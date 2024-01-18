@@ -7,7 +7,7 @@ export default function DailyForecastPanel() {
   return (
     <Grid container item xs={12} rowSpacing={0} columnSpacing={0}>
       {items.map((i) => (
-        <Grid xs={2} key={i}>
+        <Grid item xs={2} key={i}>
           <DailyForecastItem />
         </Grid>
       ))}
