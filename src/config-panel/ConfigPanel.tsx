@@ -6,17 +6,31 @@ import Paper from "@mui/material/Paper";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import Switch from "@mui/material/Switch";
 import { useState } from "react";
+import {
+  getLocalstorageItem,
+  lsKeys,
+  setLocalstorageItem,
+} from "../local-storage/localstorage";
+import { weatherDataUnits } from "../weather-data/weather-data";
 
 export default function ConfigPanel() {
-  const [unit, setUnit] = useState("standard");
-  const [darkMode, setDarkMode] = useState(false);
+  const [unit, setUnit] = useState(getLocalstorageItem(lsKeys.unit));
+  const [darkMode, setDarkMode] = useState(
+    getLocalstorageItem(lsKeys.darkMode) === "true",
+  );
 
   function handleUnitChange(event: SelectChangeEvent) {
-    setUnit(event.target.value);
+    const { value } = event.target;
+
+    setUnit(value);
+    setLocalstorageItem(lsKeys.unit, value);
   }
 
   function handleDarkModeChange(event: React.ChangeEvent<HTMLInputElement>) {
-    setDarkMode(event.target.checked);
+    const { checked } = event.target;
+
+    setDarkMode(checked);
+    setLocalstorageItem(lsKeys.darkMode, checked.toString());
   }
 
   return (
@@ -26,13 +40,15 @@ export default function ConfigPanel() {
         <Select
           labelId="unit-select-label"
           id="unit-select"
-          value={unit}
+          value={unit ?? undefined}
           label="Unit"
           onChange={handleUnitChange}
         >
-          <MenuItem value="standard">Standard</MenuItem>
-          <MenuItem value="metric">Metric</MenuItem>
-          <MenuItem value="imperial">Imperial</MenuItem>
+          {Object.values(weatherDataUnits).map((unit) => (
+            <MenuItem key={unit} value={unit}>
+              {unit}
+            </MenuItem>
+          ))}
         </Select>
       </FormControl>
       <FormControlLabel

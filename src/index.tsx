@@ -2,11 +2,14 @@ import CssBaseline from "@mui/material/CssBaseline";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
+import { initLocalstorage } from "./local-storage/localstorage";
 import reportWebVitals from "./reportWebVitals";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement,
 );
+
+initLocalstorage();
 
 root.render(
   <CssBaseline>
