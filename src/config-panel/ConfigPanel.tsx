@@ -5,32 +5,16 @@ import MenuItem from "@mui/material/MenuItem";
 import Paper from "@mui/material/Paper";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import Switch from "@mui/material/Switch";
-import { useState } from "react";
-import {
-  getLocalstorageItem,
-  lsKeys,
-  setLocalstorageItem,
-} from "../local-storage/localstorage";
-import { weatherDataUnits } from "../weather-data/weather-data";
+import { useContext } from "react";
+import { ColorModeContext } from "../color-mode/color-mode";
+import { UnitContext, Units, units } from "../weather-data/unit";
 
 export default function ConfigPanel() {
-  const [unit, setUnit] = useState(getLocalstorageItem(lsKeys.unit));
-  const [darkMode, setDarkMode] = useState(
-    getLocalstorageItem(lsKeys.darkMode) === "true",
-  );
+  const { colorMode, toggleColorMode } = useContext(ColorModeContext);
+  const { unit, setUnit } = useContext(UnitContext);
 
   function handleUnitChange(event: SelectChangeEvent) {
-    const { value } = event.target;
-
-    setUnit(value);
-    setLocalstorageItem(lsKeys.unit, value);
-  }
-
-  function handleDarkModeChange(event: React.ChangeEvent<HTMLInputElement>) {
-    const { checked } = event.target;
-
-    setDarkMode(checked);
-    setLocalstorageItem(lsKeys.darkMode, checked.toString());
+    setUnit(event.target.value as Units);
   }
 
   return (
@@ -44,7 +28,7 @@ export default function ConfigPanel() {
           label="Unit"
           onChange={handleUnitChange}
         >
-          {Object.values(weatherDataUnits).map((unit) => (
+          {units.map((unit) => (
             <MenuItem key={unit} value={unit}>
               {unit}
             </MenuItem>
@@ -53,7 +37,9 @@ export default function ConfigPanel() {
       </FormControl>
       <FormControlLabel
         labelPlacement="start"
-        control={<Switch checked={darkMode} onChange={handleDarkModeChange} />}
+        control={
+          <Switch checked={colorMode === "dark"} onChange={toggleColorMode} />
+        }
         label="Dark mode"
       />
     </Paper>

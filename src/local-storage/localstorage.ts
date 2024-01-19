@@ -1,8 +1,9 @@
-import { weatherDataUnits } from "../weather-data/weather-data";
+import { initColorMode } from "../color-mode/color-mode";
+import { initUnit } from "../weather-data/unit";
 
 export const lsKeys = {
   unit: "unit",
-  darkMode: "darkMode",
+  colorMode: "colorMode",
 };
 
 export function setLocalstorageItem(key: string, value: string) {
@@ -20,6 +21,6 @@ export function initLocalstorageItem(key: string, value: string) {
 }
 
 export function initLocalstorage() {
-  initLocalstorageItem(lsKeys.unit, weatherDataUnits.standard);
-  initLocalstorageItem(lsKeys.darkMode, "false");
+  initColorMode();
+  initUnit();
 }
