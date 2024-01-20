@@ -6,8 +6,8 @@ import Paper from "@mui/material/Paper";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import Switch from "@mui/material/Switch";
 import { useContext } from "react";
-import { ColorModeContext } from "../color-mode/color-mode";
-import { UnitContext, Units, units } from "../weather-data/unit";
+import { ColorModeContext } from "../../api/color-mode/color-mode";
+import { UnitContext, Units, units } from "../../api/weather-data/unit";
 
 export default function ConfigPanel() {
   const { colorMode, toggleColorMode } = useContext(ColorModeContext);

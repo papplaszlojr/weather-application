@@ -5,10 +5,13 @@ import "@fontsource/roboto/700.css";
 import { ThemeProvider } from "@mui/material";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
-import { ColorModeContext, useColorModeContext } from "./color-mode/color-mode";
+import {
+  ColorModeContext,
+  useColorModeContext,
+} from "../api/color-mode/color-mode";
+import { UnitContext, useUnitContext } from "../api/weather-data/unit";
 import ConfigPanel from "./config-panel/ConfigPanel";
 import PageTitle from "./page-title/PageTitle";
-import { UnitContext, useUnitContext } from "./weather-data/unit";
 import WeatherWidget1 from "./weather-widget-1/WeatherWidget1";
 import WeatherWidget2 from "./weather-widget-2/WeatherWidget2";
 
