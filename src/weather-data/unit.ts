@@ -4,11 +4,11 @@ import {
   initLocalstorageItem,
   lsKeys,
   setLocalstorageItem,
-} from "../local-storage/localstorage";
+} from "../localstorage/localstorage";
 
-export type Units = "standard" | "metric" | "imperial";
+export type Units = "metric" | "imperial";
 
-export const units = ["standard", "metric", "imperial"];
+export const units = ["metric", "imperial"];
 
 export function saveUnit(value: Units) {
   setLocalstorageItem(lsKeys.unit, value);
@@ -17,17 +17,15 @@ export function saveUnit(value: Units) {
 export function getUnit(): Units {
   const unit = getLocalstorageItem(lsKeys.unit);
 
-  return unit === "standard" || unit === "metric" || unit === "imperial"
-    ? unit
-    : "standard";
+  return unit === "imperial" ? "imperial" : "metric";
 }
 
 export function initUnit() {
-  initLocalstorageItem(lsKeys.unit, "standard");
+  initLocalstorageItem(lsKeys.unit, "metric");
 }
 
 export const UnitContext = createContext({
-  unit: "standard",
+  unit: "metric",
   setUnit(nextUnit: Units) {},
 });
 

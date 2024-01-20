@@ -2,7 +2,7 @@ import CssBaseline from "@mui/material/CssBaseline";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
-import { initLocalstorage } from "./local-storage/localstorage";
+import { initLocalstorage } from "./localstorage/localstorage";
 import reportWebVitals from "./reportWebVitals";
 
 const root = ReactDOM.createRoot(

@@ -5,7 +5,7 @@ import {
   initLocalstorageItem,
   lsKeys,
   setLocalstorageItem,
-} from "../local-storage/localstorage";
+} from "../localstorage/localstorage";
 
 type ColorModes = "light" | "dark";
 
