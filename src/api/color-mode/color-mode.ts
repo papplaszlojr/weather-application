@@ -48,6 +48,13 @@ export function useColorModeContext() {
           palette: {
             mode: colorMode,
           },
+          components: {
+            MuiPaper: {
+              defaultProps: {
+                elevation: 4,
+              },
+            },
+          },
         }),
       };
     },

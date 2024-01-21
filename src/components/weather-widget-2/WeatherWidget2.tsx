@@ -35,7 +35,7 @@ export default function WeatherWidget2() {
   }
 
   return (
-    <Paper>
+    <Paper sx={{ mb: 5 }}>
       {cities.map((locationName, index) => (
         <CityWeather
           key={locationName}
