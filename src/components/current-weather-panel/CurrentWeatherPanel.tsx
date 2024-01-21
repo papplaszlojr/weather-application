@@ -43,10 +43,12 @@ export default function CurrentWeatherPanel({
                 <Typography variant="h2">
                   {currentWeather?.temp ?? ""}
                 </Typography>
-                <img
-                  src={`https://openweathermap.org/img/wn/${currentWeather?.icon}@2x.png`}
-                  alt={currentWeather?.description}
-                ></img>
+                {currentWeather?.icon && (
+                  <img
+                    src={`https://openweathermap.org/img/wn/${currentWeather?.icon}@2x.png`}
+                    alt={currentWeather?.description}
+                  ></img>
+                )}
               </Box>
               <Typography variant="subtitle1">
                 {currentWeather?.description ?? ""}

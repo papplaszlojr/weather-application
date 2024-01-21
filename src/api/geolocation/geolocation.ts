@@ -4,6 +4,15 @@ const GEO_DIRECT_URL = "http://api.openweathermap.org/geo/1.0/direct";
 const GEO_REVERSE_URL = "http://api.openweathermap.org/geo/1.0/reverse";
 const APP_ID = process.env.REACT_APP_OWM_API_KEY;
 
+export const cities = [
+  "Birmingham",
+  "Chicago",
+  "Reykjavík",
+  "Amsterdam",
+  "Sydney",
+  "Medellín",
+];
+
 export function useGeolocationCoordinates() {
   const [coordinates, setCoordinates] = useState<Coordinates | undefined>();
   const [loading, setLoading] = useState(true);

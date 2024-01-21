@@ -36,7 +36,7 @@ function App() {
                 <Grid item xs={12}>
                   <WeatherWidget1 />
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item xs={12} sm={6} md={4}>
                   <WeatherWidget2 />
                 </Grid>
               </Grid>
