@@ -24,13 +24,16 @@ export function initUnit() {
   initLocalstorageItem(lsKeys.unit, "metric");
 }
 
-export const UnitContext = createContext({
+export const UnitContext = createContext<{
+  unit: Units;
+  setUnit: (nextUnit: Units) => void;
+}>({
   unit: "metric",
-  setUnit(nextUnit: Units) {},
+  setUnit() {},
 });
 
 export function useUnitContext() {
-  const [unit, setUnit] = useState(getUnit());
+  const [unit, setUnit] = useState<Units>(getUnit());
 
   return useMemo(
     function getUnitContext() {
@@ -44,4 +47,16 @@ export function useUnitContext() {
     },
     [unit],
   );
+}
+
+export function formatPercent(value: number) {
+  return `${Math.round(value)}%`;
+}
+
+export function formatTemp(value: number, unit: Units) {
+  return `${Math.round(value)}°${unit === "metric" ? "C" : "F"}`;
+}
+
+export function formatSpeed(value: number, unit: Units) {
+  return `${Math.round(value)} ${unit === "metric" ? "m/s" : "mph"}`;
 }

@@ -1,5 +1,6 @@
-import { useEffect, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { Coordinates } from "../geolocation/geolocation";
+import { UnitContext, formatPercent, formatSpeed, formatTemp } from "./unit";
 
 const OWM_URL = "https://api.openweathermap.org/data/2.5/onecall";
 const APP_ID = process.env.REACT_APP_OWM_API_KEY;
@@ -9,19 +10,27 @@ export function useWeather(
   excludeHourly: boolean,
   excludeDaily: boolean,
 ) {
-  const [currentWeather, setCurrentWeather] = useState<CurrentWeather>({});
-  const [hourlyForecast, setHourlyForecast] = useState<HourlyForecast[]>([]);
-  const [dailyForecast, setDailyForecast] = useState<DailyForecast[]>([]);
+  const [currentWeather, setCurrentWeather] = useState<
+    CurrentWeather | undefined
+  >();
+  const [hourlyForecast, setHourlyForecast] = useState<
+    HourlyForecast[] | undefined
+  >();
+  const [dailyForecast, setDailyForecast] = useState<
+    DailyForecast[] | undefined
+  >();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | undefined>();
+
+  const { unit } = useContext(UnitContext);
 
   const url = useMemo(
     function assembleUrl() {
       if (APP_ID && coordinates) {
-        return `${OWM_URL}?lat=${coordinates.lat}&lon=${coordinates.lon}&exclude=minutely${excludeHourly ? ",hourly" : ""}${excludeDaily ? ",daily" : ""},alerts&appid=${APP_ID}`;
+        return `${OWM_URL}?lat=${coordinates.lat}&lon=${coordinates.lon}&exclude=minutely${excludeHourly ? ",hourly" : ""}${excludeDaily ? ",daily" : ""},alerts&units=${unit}&appid=${APP_ID}`;
       }
     },
-    [coordinates, excludeHourly, excludeDaily],
+    [coordinates, unit, excludeHourly, excludeDaily],
   );
 
   useEffect(
@@ -33,23 +42,28 @@ export function useWeather(
           .then(function getJson(response) {
             return response.json();
           })
-          .then(function processWeatherData(weatherData: WeatherData) {
+          .then(function processWeatherData({
+            current,
+            hourly,
+            daily,
+          }: WeatherData) {
             setCurrentWeather({
-              timestamp: weatherData.current.dt * 1000,
-              temp: weatherData.current.temp,
-              humidity: weatherData.current.humidity,
-              windSpeed: weatherData.current.wind_speed,
-              description: weatherData.current.weather[0].description,
-              icon: weatherData.current.weather[0].icon,
+              timestamp: current.dt * 1000,
+              temp: formatTemp(current.temp, unit),
+              clouds: formatPercent(current.clouds),
+              humidity: formatPercent(current.humidity),
+              windSpeed: formatSpeed(current.wind_speed, unit),
+              description: current.weather[0].description,
+              icon: current.weather[0].icon,
             });
 
             if (!excludeHourly) {
-              const hours = weatherData.hourly.slice(1, 13);
+              const hours = hourly.slice(1, 13);
 
               setHourlyForecast(
                 hours.map((hour) => ({
                   timestamp: hour.dt * 1000,
-                  temp: hour.temp,
+                  temp: formatTemp(hour.temp, unit),
                   description: hour.weather[0].description,
                   icon: hour.weather[0].icon,
                 })),
@@ -57,13 +71,13 @@ export function useWeather(
             }
 
             if (!excludeDaily) {
-              const days = weatherData.daily.slice(1, 7);
+              const days = daily.slice(1, 7);
 
               setDailyForecast(
                 days.map((day) => ({
                   timestamp: day.dt * 1000,
-                  tempMin: day.temp.min,
-                  tempMax: day.temp.max,
+                  tempMin: formatTemp(day.temp.min, unit),
+                  tempMax: formatTemp(day.temp.max, unit),
                   description: day.weather[0].description,
                   icon: day.weather[0].icon,
                 })),
@@ -74,15 +88,15 @@ export function useWeather(
             setLoading(false);
           })
           .catch(function handleError() {
-            setCurrentWeather({});
-            setHourlyForecast([]);
-            setDailyForecast([]);
+            setCurrentWeather(undefined);
+            setHourlyForecast(undefined);
+            setDailyForecast(undefined);
             setError("Error fetching weather data");
             setLoading(false);
           });
       }
     },
-    [url, excludeHourly, excludeDaily],
+    [url, unit, excludeHourly, excludeDaily],
   );
 
   return { currentWeather, hourlyForecast, dailyForecast, loading, error };
@@ -95,6 +109,7 @@ export function useCurrentWeather(coordinates: Coordinates | undefined) {
 type Current = {
   dt: number;
   temp: number;
+  clouds: number;
   humidity: number;
   wind_speed: number;
   weather: [
@@ -136,32 +151,27 @@ type WeatherData = {
   daily: Day[];
 };
 
-type CurrentWeather =
-  | {
-      timestamp: number;
-      temp: number;
-      humidity: number;
-      windSpeed: number;
-      description: string;
-      icon: string;
-    }
-  | {};
+export type CurrentWeather = {
+  timestamp: number;
+  temp: string;
+  clouds: string;
+  humidity: string;
+  windSpeed: string;
+  description: string;
+  icon: string;
+};
 
-type HourlyForecast =
-  | {
-      timestamp: number;
-      temp: number;
-      description: string;
-      icon: string;
-    }
-  | {};
+export type HourlyForecast = {
+  timestamp: number;
+  temp: string;
+  description: string;
+  icon: string;
+};
 
-type DailyForecast =
-  | {
-      timestamp: number;
-      tempMin: number;
-      tempMax: number;
-      description: string;
-      icon: string;
-    }
-  | {};
+export type DailyForecast = {
+  timestamp: number;
+  tempMin: string;
+  tempMax: string;
+  description: string;
+  icon: string;
+};
