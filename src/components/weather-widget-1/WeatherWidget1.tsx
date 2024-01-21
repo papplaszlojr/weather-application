@@ -1,19 +1,44 @@
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
+import {
+  useGeolocationCoordinates,
+  useLocationName,
+} from "../../api/geolocation/geolocation";
+import { useWeather } from "../../api/weather-data/weather-data";
 import CurrentWeatherPanel from "../current-weather-panel/CurrentWeatherPanel";
 import DailyForecastPanel from "./daily-forecast-panel/DailyForecastPanel";
 import HourlyForecastPanel from "./hourly-forecast-panel/HourlyForecastPanel";
 
 export default function WeatherWidget1() {
+  const geolocation = useGeolocationCoordinates();
+  const location = useLocationName(geolocation.coordinates);
+  const weather = useWeather(geolocation.coordinates, false, false);
+  const loading = geolocation.loading || location.loading || weather.loading;
+
   return (
     <Paper>
-      <Grid container item xs={12} rowSpacing={0} columnSpacing={0}>
-        <Grid item xs={12} md={4}>
-          <CurrentWeatherPanel />
+      <Grid container item xs={12}>
+        <Grid container item xs={12}>
+          <Grid item xs={12} sm={6} md={4}>
+            <CurrentWeatherPanel
+              locationName={location.name}
+              currentWeather={weather.currentWeather}
+              loading={loading}
+              error={geolocation.error || location.error || weather.error}
+            />
+          </Grid>
+          <Grid item xs={12} md={8}>
+            <HourlyForecastPanel
+              hourlyForecast={weather.hourlyForecast}
+              loading={loading}
+            />
+          </Grid>
         </Grid>
-        <Grid container item xs={12} md={8}>
-          <HourlyForecastPanel />
-          <DailyForecastPanel />
+        <Grid item xs={12} sx={{ borderTop: 1, borderColor: "grey.200" }}>
+          <DailyForecastPanel
+            dailyForecast={weather.dailyForecast}
+            loading={loading}
+          />
         </Grid>
       </Grid>
     </Paper>

@@ -4,6 +4,7 @@ import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 import { ThemeProvider } from "@mui/material";
 import Container from "@mui/material/Container";
+import CssBaseline from "@mui/material/CssBaseline";
 import Grid from "@mui/material/Grid";
 import {
   ColorModeContext,
@@ -23,22 +24,24 @@ function App() {
     <UnitContext.Provider value={unitContext}>
       <ColorModeContext.Provider value={colorModeContext}>
         <ThemeProvider theme={theme}>
-          <Container maxWidth="md">
-            <Grid container item xs={12} rowSpacing={5} columnSpacing={0}>
-              <Grid item xs={12}>
-                <PageTitle />
+          <CssBaseline>
+            <Container maxWidth="md">
+              <Grid container item xs={12} rowSpacing={5} columnSpacing={0}>
+                <Grid item xs={12}>
+                  <PageTitle />
+                </Grid>
+                <Grid item xs={12}>
+                  <ConfigPanel />
+                </Grid>
+                <Grid item xs={12}>
+                  <WeatherWidget1 />
+                </Grid>
+                <Grid item xs={4}>
+                  <WeatherWidget2 />
+                </Grid>
               </Grid>
-              <Grid item xs={12}>
-                <ConfigPanel />
-              </Grid>
-              <Grid item xs={12}>
-                <WeatherWidget1 />
-              </Grid>
-              <Grid item xs={4}>
-                <WeatherWidget2 />
-              </Grid>
-            </Grid>
-          </Container>
+            </Container>
+          </CssBaseline>
         </ThemeProvider>
       </ColorModeContext.Provider>
     </UnitContext.Provider>

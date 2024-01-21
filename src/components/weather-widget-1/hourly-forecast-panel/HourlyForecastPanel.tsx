@@ -1,16 +1,40 @@
+import Box from "@mui/material/Box";
+import Fade from "@mui/material/Fade";
 import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
+import { HourlyForecast } from "../../../api/weather-data/weather-data";
 import HourlyForecastItem from "./HourlyForecastItem";
 
-const items = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
-
-export default function HourlyForecastPanel() {
+export default function HourlyForecastPanel({
+  hourlyForecast,
+  loading,
+}: Props) {
   return (
-    <Grid container item xs={12} rowSpacing={0} columnSpacing={0}>
-      {items.map((i) => (
-        <Grid item xs={1} key={i}>
-          <HourlyForecastItem />
+    <Box
+      padding={3}
+      sx={{
+        borderLeft: { xs: 0, md: 1 },
+        borderTop: { xs: 1, md: 0 },
+        borderColor: { xs: "grey.200", md: "grey.200" },
+      }}
+      height={293}
+    >
+      <Typography variant="h6">12 hour forecast</Typography>
+      <Fade in={!loading}>
+        <Grid container item xs={12} marginTop={2} rowGap={4}>
+          {hourlyForecast &&
+            hourlyForecast?.map((forecastItem) => (
+              <Grid item xs={2} key={forecastItem.timestamp}>
+                <HourlyForecastItem forecastItem={forecastItem} />
+              </Grid>
+            ))}
         </Grid>
-      ))}
-    </Grid>
+      </Fade>
+    </Box>
   );
 }
+
+type Props = {
+  hourlyForecast: HourlyForecast[] | undefined;
+  loading: boolean;
+};
