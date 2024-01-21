@@ -1,5 +1,10 @@
 import { useContext, useEffect, useMemo, useState } from "react";
 import { Coordinates } from "../geolocation/geolocation";
+import {
+  getLocalstorageItem,
+  lsKeys,
+  setLocalstorageItem,
+} from "../localstorage/localstorage";
 import { UnitContext, formatPercent, formatSpeed, formatTemp } from "./unit";
 
 const OWM_URL = "https://api.openweathermap.org/data/2.5/onecall";
@@ -59,29 +64,37 @@ export function useWeather(
 
             if (!excludeHourly) {
               const hours = hourly.slice(1, 13);
+              const newHourlyForecast = hours.map((hour) => ({
+                timestamp: hour.dt * 1000,
+                temp: formatTemp(hour.temp, unit),
+                description: hour.weather[0].description,
+                icon: hour.weather[0].icon,
+              }));
 
-              setHourlyForecast(
-                hours.map((hour) => ({
-                  timestamp: hour.dt * 1000,
-                  temp: formatTemp(hour.temp, unit),
-                  description: hour.weather[0].description,
-                  icon: hour.weather[0].icon,
-                })),
+              setLocalstorageItem(
+                lsKeys.hourlyForecast(unit),
+                JSON.stringify(newHourlyForecast),
               );
+
+              setHourlyForecast(newHourlyForecast);
             }
 
             if (!excludeDaily) {
               const days = daily.slice(1, 7);
+              const newDailyForecast = days.map((day) => ({
+                timestamp: day.dt * 1000,
+                tempMin: formatTemp(day.temp.min, unit),
+                tempMax: formatTemp(day.temp.max, unit),
+                description: day.weather[0].description,
+                icon: day.weather[0].icon,
+              }));
 
-              setDailyForecast(
-                days.map((day) => ({
-                  timestamp: day.dt * 1000,
-                  tempMin: formatTemp(day.temp.min, unit),
-                  tempMax: formatTemp(day.temp.max, unit),
-                  description: day.weather[0].description,
-                  icon: day.weather[0].icon,
-                })),
+              setLocalstorageItem(
+                lsKeys.dailyForecast(unit),
+                JSON.stringify(newDailyForecast),
               );
+
+              setDailyForecast(newDailyForecast);
             }
 
             setError(undefined);
@@ -104,6 +117,33 @@ export function useWeather(
 
 export function useCurrentWeather(coordinates: Coordinates | undefined) {
   return useWeather(coordinates, true, true);
+}
+
+export function useCachedWeather() {
+  const { unit } = useContext(UnitContext);
+
+  const hourlyForecast = useMemo(() => {
+    return getCachedWeather(lsKeys.hourlyForecast(unit));
+  }, [unit]);
+
+  const dailyForecast = useMemo(() => {
+    return getCachedWeather(lsKeys.dailyForecast(unit));
+  }, [unit]);
+
+  return { hourlyForecast, dailyForecast };
+}
+
+function getCachedWeather(lsKey: string) {
+  const cachedDataStr = getLocalstorageItem(lsKey);
+
+  if (cachedDataStr) {
+    const cachedData = JSON.parse(cachedDataStr);
+    const startDate = cachedData?.[0]?.timestamp;
+
+    if (startDate && startDate >= Date.now()) {
+      return cachedData;
+    }
+  }
 }
 
 type Current = {

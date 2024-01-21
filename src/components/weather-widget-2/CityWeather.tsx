@@ -1,12 +1,12 @@
 import { Box } from "@mui/material";
 import Fade from "@mui/material/Fade";
 import { useLocationCoordinates } from "../../api/geolocation/geolocation";
-import { useWeather } from "../../api/weather-data/weather-data";
+import { useCurrentWeather } from "../../api/weather-data/weather-data";
 import CurrentWeatherPanel from "../current-weather-panel/CurrentWeatherPanel";
 
 export default function CityWeather({ locationName, show }: Props) {
   const location = useLocationCoordinates(locationName);
-  const weather = useWeather(location.coordinates, true, true);
+  const weather = useCurrentWeather(location.coordinates);
 
   return (
     <Fade in={show}>

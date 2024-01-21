@@ -1,9 +1,11 @@
 import { initColorMode } from "../color-mode/color-mode";
-import { initUnit } from "../weather-data/unit";
+import { Units, initUnit } from "../weather-data/unit";
 
 export const lsKeys = {
   unit: "unit",
   colorMode: "colorMode",
+  hourlyForecast: (unit: Units) => `hourlyForecast-${unit}`,
+  dailyForecast: (unit: Units) => `dailyForecast-${unit}`,
 };
 
 export function setLocalstorageItem(key: string, value: string) {
